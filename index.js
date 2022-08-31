@@ -15,7 +15,7 @@ const {parseJsonValue} = require('@popovmp/json-value-parser')
 function parse(argv)
 {
 	const options = {}
-	let lastKey = ''
+	let lastKey = 'subcommand'
 
 	const args = argv || process.argv
 
@@ -23,7 +23,7 @@ function parse(argv)
 		const val = parseJsonValue(value)
 
 		if ( Object.hasOwn(options, key) ) {
-			if (Array.isArray(options[key]))
+			if ( Array.isArray(options[key]) )
 				options[key].push(val)
 			else
 				options[key] = [options[key], val]
@@ -42,14 +42,14 @@ function parse(argv)
 			const option = input.replace(/^--/, '')
 			const match  = option.match(/^(.+)=(.+)$/)
 			if (match) {
-				lastKey = toCamelCase( match[1] )
+				lastKey = toCamelCase(match[1])
 				pushValue(lastKey, match[2])
 			}
 			else {
 				lastKey = toCamelCase(option)
 			}
 		}
-		else if (lastKey !== '') {
+		else {
 			pushValue(lastKey, input)
 		}
 	}
