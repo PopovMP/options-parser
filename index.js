@@ -1,4 +1,5 @@
 'use strict'
+
 const {toCamelCase}    = require('@popovmp/camel-case')
 const {parseJsonValue} = require('@popovmp/json-value-parser')
 
@@ -12,13 +13,12 @@ const {parseJsonValue} = require('@popovmp/json-value-parser')
 function parse(argv)
 {
 	const options = {}
-	let lastKey = 'subcommand'
 
 	const pushValue = (key, value) => {
 		const val = parseJsonValue(value)
 
-		if ( options.hasOwnProperty(key) ) {
-			if ( Array.isArray(options[key]) )
+		if (options.hasOwnProperty(key)) {
+			if (Array.isArray(options[key]))
 				options[key].push(val)
 			else
 				options[key] = [options[key], val]
@@ -28,12 +28,13 @@ function parse(argv)
 		}
 	}
 
+	let lastKey = 'subcommand'
+
 	for (const arg of argv) {
 		const input = arg.trim()
-
 		if (input === '=') continue
 
-		if ( input.startsWith('--') ) {
+		if (input.startsWith('--')) {
 			const option = input.replace(/^--/, '')
 			const match  = option.match(/^(.+)=(.+)$/)
 			if (match) {
@@ -52,6 +53,4 @@ function parse(argv)
 	return options
 }
 
-module.exports = {
-	parse,
-}
+module.exports = {parse}
