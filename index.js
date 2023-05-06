@@ -17,7 +17,7 @@ function parse(argv)
 	const pushValue = (key, value) => {
 		const val = parseJsonValue(value)
 
-		if ( Object.hasOwn(options, key) ) {
+		if ( options.hasOwnProperty(key) ) {
 			if ( Array.isArray(options[key]) )
 				options[key].push(val)
 			else
@@ -53,5 +53,5 @@ function parse(argv)
 }
 
 module.exports = {
-	parse
+	parse,
 }
