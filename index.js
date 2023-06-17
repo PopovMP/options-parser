@@ -4,6 +4,30 @@ const {toCamelCase}    = require("@popovmp/camel-case");
 const {parseJsonValue} = require("@popovmp/json-value-parser");
 
 /**
+ * Adds a key-value pair to an object in place
+ * If the key already exists, it makes an array of values
+ *
+ * @param {Object} obj
+ * @param {string} key
+ * @param {*}      value
+ *
+ * @return {void}
+ */
+function addKeyValue(obj, key, value) {
+    const val = parseJsonValue(value);
+
+    if (obj.hasOwnProperty(key)) {
+        if (Array.isArray(obj[key])) {
+            obj[key].push(val);
+        } else {
+            obj[key] = [obj[key], val];
+        }
+    } else {
+        obj[key] = val;
+    }
+}
+
+/**
  * Parses the CLI options
  *
  * @param {string[]} argv
@@ -12,22 +36,7 @@ const {parseJsonValue} = require("@popovmp/json-value-parser");
  */
 function parse(argv) {
     const options = {};
-
-    const pushValue = (key, value) => {
-        const val = parseJsonValue(value);
-
-        if (options.hasOwnProperty(key)) {
-            if (Array.isArray(options[key])) {
-                options[key].push(val);
-            } else {
-                options[key] = [options[key], val];
-            }
-        } else {
-            options[key] = val;
-        }
-    };
-
-    let lastKey = "subcommand";
+    let   lastKey = "subcommand";
 
     for (const arg of argv) {
         const input = arg.trim();
@@ -40,12 +49,12 @@ function parse(argv) {
             const match  = option.match(/^(.+)=(.+)$/);
             if (match) {
                 lastKey = toCamelCase(match[1]);
-                pushValue(lastKey, match[2]);
+                addKeyValue(options, lastKey, match[2]);
             } else {
                 lastKey = toCamelCase(option);
             }
         } else {
-            pushValue(lastKey, input);
+            addKeyValue(options, lastKey, input);
         }
     }
 

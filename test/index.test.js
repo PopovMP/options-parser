@@ -1,7 +1,7 @@
 "use strict";
 
 const {strictEqual}  = require("assert");
-const {describe, it} = require("@popovmp/mocha-tiny");
+const {describe, it} = require("node:test");
 const {parse}        = require("../index.js");
 
 describe("options-parser", () => {
@@ -31,10 +31,16 @@ describe("options-parser", () => {
             strictEqual(output, '{"foo":[null,true,false,3.14,-42]}');
         });
 
-        it("adds options with =", () => {
+        it('adds options with "="', () => {
             const argv   = ["--foo=boo", "null", "--foo=bar"];
             const output = JSON.stringify(parse(argv));
             strictEqual(output, '{"foo":["boo",null,"bar"]}');
+        });
+
+        it('parses a value with "("', () => {
+            const argv   = ["--foo", "val_(24)"];
+            const output = JSON.stringify(parse(argv));
+            strictEqual(output, '{"foo":"val_(24)"}');
         });
 
         it("parses a subcommand", () => {
